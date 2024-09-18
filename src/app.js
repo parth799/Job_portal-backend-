@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import morgan from 'morgan';
 import { config } from "dotenv";
 import userRouter from './router/user.routes.js'
+import fileUpload from 'express-fileupload';
 
 const app = express()
 // config({ path: "./config/config.env" });
@@ -21,7 +22,6 @@ app.use(express.static("public"))
 
 app.use(morgan("dev"));
 
-import fileUpload from 'express-fileupload';
 app.use(
     fileUpload({
       useTempFiles: true,
