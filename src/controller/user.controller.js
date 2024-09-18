@@ -35,11 +35,11 @@ const registerUser = asyncHandler(async (req, res) => {
     };
 
     if (req.files && req.files.resume) {
-        const {resume} = req.files;
+        const { resume } = req.files;
 
         if (resume) {
             try {
-                const uploadOnCloudinary = await cloudinary.uploader.upload(resume.tempFilePath,{ folder: "Job_Resume" })
+                const uploadOnCloudinary = await cloudinary.uploader.upload(resume.tempFilePath, { folder: "Job_Resume" })
                 if (!uploadOnCloudinary || uploadOnCloudinary.erorr) {
                     throw new ApiError(500, "Failed to upload to Cloudinary")
                 }
@@ -53,7 +53,22 @@ const registerUser = asyncHandler(async (req, res) => {
         }
     }
     const user = await User.create(userData);
-    sendToken(user, 201, res, "User Registered");
+    // console.log("user", user);
+
+    const token = user.getJWTToken();
+    console.log("token", user);
+
+    const options = {
+        expires: new Date(
+            Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+        ),
+        httpOnly: true,
+    };
+
+    res.status(200).cookie("token", token, options).json( new ApiResponse(200, {
+        user: user,
+        token,
+    },"register successfully!",));
 })
 
 export { registerUser }

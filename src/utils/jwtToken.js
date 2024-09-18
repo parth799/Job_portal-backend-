@@ -2,6 +2,8 @@ import ApiResponse from "./ApiResponse.js";
 
 export const sendToken = (user, statusCode, res, message) => {
   const token = user.getJWTToken();
+  console.log("token" , user );
+  
   const options = {
     expires: new Date(
       Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
@@ -9,9 +11,10 @@ export const sendToken = (user, statusCode, res, message) => {
     httpOnly: true,
   };
 
-  res.status(statusCode).cookie("token", token, options).json(new ApiResponse(200, {
-    user:user,
+  res.status(statusCode).cookie("token", token, options).json({
+    success: true,
+    user,
     message,
     token,
-  }));
+  });
 };
