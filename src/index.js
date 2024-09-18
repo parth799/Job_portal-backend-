@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import connectDB from "./db/index.js";
 import app from "./app.js";
+import cloudinary from "cloudinary";
 
 dotenv.config({
     path:"./env"
@@ -10,7 +11,7 @@ cloudinary.v2.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
   });
-  
+
 connectDB()
 .then(() => {
     app.on("error", (error) => {
