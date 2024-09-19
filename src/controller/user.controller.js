@@ -121,6 +121,84 @@ const getCurrentUser = asyncHandler(async (req, res) => {
     }, "User data"));
 })
 
+const updateProfile = asyncHandler(async (req, res) => {
+    const newUserData = {
+        name: req.body.name || req?.user?.name,
+        email: req.body.email || req?.user?.email,
+        phone: req.body.phone || req?.user?.phone,
+        address: req.body.address || req?.user?.address,
+        coverLetter: req.body.coverLetter || req?.user?.coverLetter,
+        niches: {
+            firstNiche: req.body.firstNiche || req?.user?.niches?.firstNiche,
+            secondNiche: req.body.secondNiche || req?.user?.niches?.secondNiche,
+            thirdNiche: req.body.thirdNiche || req?.user?.niches?.thirdNiche,
+        },
+    }
+    const { firstNiche, secondNiche, thirdNiche } = newUserData?.niches;
+
+    if (req.user.role === "Job Seeker" && (!firstNiche || !secondNiche || !thirdNiche)) {
+        throw new ApiError(400, "Please provide your preferred job niches.");
+    }
+    if (req.files) {
+        const { resume } = req.files.resume;
+        if (resume) {
+            try {
+                const currentResumeId = req.user.resume.public_id;
+                if (currentResumeId) {
+                    await cloudinary.uploader.destroy(currentResumeId);
+                }
+                const uploadOnCloudinary = await cloudinary.uploader.upload(resume.tempFilePath, { folder: "Job_Resume" })
+                if (!uploadOnCloudinary || uploadOnCloudinary.erorr) {
+                    throw new ApiError(500, "Failed to upload to Cloudinary")
+                }
+                newUserData.resume = {
+                    public_id: uploadOnCloudinary.public_id,
+                    url: uploadOnCloudinary.secure_url,
+                }
+            } catch (error) {
+                throw new ApiError(500, "upload on cloudinary failed")
+            }
+        }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(req.user.id, newUserData, {
+        new: true,
+        runValidators: true,
+        useFindAndModify: false,
+    }).select("-password")
+    res.status(200).json(new ApiResponse(200, {
+        user: updatedUser,
+    }, "Profile updated successfully!"));
+});
 
 
-export { registerUser, userLogin, logoutUser, getCurrentUser }
+const changePassword = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user.id).select("+password");
+
+    const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+
+    if (!isPasswordMatched) {
+        throw new ErrorHandler("Old password is incorrect.", 400);
+    }
+
+    if (req.body.newPassword !== req.body.confirmPassword) {
+        throw new ErrorHandler("New password & confirm password do not match.", 400)
+    }
+
+    user.password = req.body.newPassword;
+    await user.save();
+    const token = user.getJWTToken();
+
+    const options = {
+        expires: new Date(
+            Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+        ),
+        httpOnly: true,
+    };
+
+    res.status(200).cookie("token", token, options).json(new ApiResponse(200, {
+        user: user,
+        token,
+    }, "password updates successfully!",));
+})
+export { registerUser, userLogin, logoutUser, getCurrentUser, updateProfile, changePassword }
