@@ -53,10 +53,8 @@ const registerUser = asyncHandler(async (req, res) => {
         }
     }
     const user = await User.create(userData);
-    // console.log("user", user);
 
     const token = user.getJWTToken();
-    console.log("token", user);
 
     const options = {
         expires: new Date(
@@ -65,10 +63,64 @@ const registerUser = asyncHandler(async (req, res) => {
         httpOnly: true,
     };
 
-    res.status(200).cookie("token", token, options).json( new ApiResponse(200, {
+    res.status(200).cookie("token", token, options).json(new ApiResponse(200, {
         user: user,
         token,
-    },"register successfully!",));
+    }, "register successfully!",));
 })
 
-export { registerUser }
+const userLogin = asyncHandler(async (req, res) => {
+    const { role, email, password } = req.body;
+
+    if (!role || !email || !password) {
+        throw new ApiError(400, "All fields are required");
+    }
+    const user = await User.findOne({ email }).select("+password")
+    if (!user) {
+        throw new ApiError(401, "Invalid email or password");
+    }
+    const isPasswordMatch = await user.comparePassword(password);
+    if (!isPasswordMatch) {
+        throw new ApiError(401, "Invalid email or password");
+    }
+    if (user.role !== role) {
+        throw new ApiError(401, "Unauthorized access");
+    }
+    const token = user.getJWTToken();
+
+    const options = {
+        expires: new Date(
+            Date.now() + process.env.COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+        ),
+        httpOnly: true,
+    };
+
+    res.status(200).cookie("token", token, options).json(new ApiResponse(200, {
+        user: user,
+        token,
+    }, "login successfully!",));
+})
+
+const logoutUser = asyncHandler(async (req, res) => {
+    res
+        .status(200)
+        .cookie("token", "", {
+            expires: new Date(Date.now()),
+            httpOnly: true,
+        })
+        .json(new ApiResponse(200, {
+            success: true,
+            message: "Logged out successfully.",
+        }));
+});
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user.id).select("-password")
+    res.json(new ApiResponse(200, {
+        user,
+    }, "User data"));
+})
+
+
+
+export { registerUser, userLogin, logoutUser, getCurrentUser }
