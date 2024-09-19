@@ -3,7 +3,6 @@ import ApiError from "../utils/ApiError.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import { User } from "../model/user.model.js";
 import { v2 as cloudinary } from "cloudinary"
-import { sendToken } from "../utils/jwtToken.js";
 
 const registerUser = asyncHandler(async (req, res) => {
     const { name, email, phone, address, password, role, firstNiche, secondNiche, thirdNiche, coverLetter } = req.body;
@@ -63,7 +62,7 @@ const registerUser = asyncHandler(async (req, res) => {
         httpOnly: true,
     };
 
-    res.status(200).cookie("token", token, options).json(new ApiResponse(200, {
+    return res.status(200).cookie("token", token, options).json(new ApiResponse(200, {
         user: user,
         token,
     }, "register successfully!",));
@@ -95,14 +94,14 @@ const userLogin = asyncHandler(async (req, res) => {
         httpOnly: true,
     };
 
-    res.status(200).cookie("token", token, options).json(new ApiResponse(200, {
+    return res.status(200).cookie("token", token, options).json(new ApiResponse(200, {
         user: user,
         token,
     }, "login successfully!",));
 })
 
 const logoutUser = asyncHandler(async (req, res) => {
-    res
+    return res
         .status(200)
         .cookie("token", "", {
             expires: new Date(Date.now()),
@@ -116,7 +115,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 
 const getCurrentUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.user.id).select("-password")
-    res.json(new ApiResponse(200, {
+    return res.json(new ApiResponse(200, {
         user,
     }, "User data"));
 })
@@ -166,7 +165,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         runValidators: true,
         useFindAndModify: false,
     }).select("-password")
-    res.status(200).json(new ApiResponse(200, {
+    return res.status(200).json(new ApiResponse(200, {
         user: updatedUser,
     }, "Profile updated successfully!"));
 });
@@ -196,9 +195,10 @@ const changePassword = asyncHandler(async (req, res) => {
         httpOnly: true,
     };
 
-    res.status(200).cookie("token", token, options).json(new ApiResponse(200, {
+    return res.status(200).cookie("token", token, options).json(new ApiResponse(200, {
         user: user,
         token,
     }, "password updates successfully!",));
 })
+
 export { registerUser, userLogin, logoutUser, getCurrentUser, updateProfile, changePassword }
