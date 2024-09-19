@@ -6,6 +6,8 @@ import { config } from "dotenv";
 import fileUpload from 'express-fileupload';
 import userRouter from './router/user.routes.js'
 import jobRouter from './router/job.routes.js'
+import applicationRouter from './router/application.routes.js'
+
 const app = express()
 // config({ path: "./config/config.env" });
 
@@ -31,5 +33,6 @@ app.use(
 
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/job", jobRouter);
+app.use("/api/v1/application", applicationRouter);
 
 export default app;

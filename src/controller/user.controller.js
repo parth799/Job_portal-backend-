@@ -132,31 +132,35 @@ const updateProfile = asyncHandler(async (req, res) => {
             secondNiche: req.body.secondNiche || req?.user?.niches?.secondNiche,
             thirdNiche: req.body.thirdNiche || req?.user?.niches?.thirdNiche,
         },
-    }
+    };
     const { firstNiche, secondNiche, thirdNiche } = newUserData?.niches;
-
     if (req.user.role === "Job Seeker" && (!firstNiche || !secondNiche || !thirdNiche)) {
         throw new ApiError(400, "Please provide your preferred job niches.");
     }
-    if (req.files) {
-        const { resume } = req.files.resume;
-        if (resume) {
-            try {
-                const currentResumeId = req.user.resume.public_id;
-                if (currentResumeId) {
-                    await cloudinary.uploader.destroy(currentResumeId);
-                }
-                const uploadOnCloudinary = await cloudinary.uploader.upload(resume.tempFilePath, { folder: "Job_Resume" })
-                if (!uploadOnCloudinary || uploadOnCloudinary.erorr) {
-                    throw new ApiError(500, "Failed to upload to Cloudinary")
-                }
-                newUserData.resume = {
-                    public_id: uploadOnCloudinary.public_id,
-                    url: uploadOnCloudinary.secure_url,
-                }
-            } catch (error) {
-                throw new ApiError(500, "upload on cloudinary failed")
+
+    if (req.files && req.files.resume) {
+        try {
+            const resumeFile = req.files.resume;
+
+            const currentResumeId = req.user?.resume?.public_id;
+            if (currentResumeId) {
+                await cloudinary.uploader.destroy(currentResumeId);
             }
+
+            const uploadOnCloudinary = await cloudinary.uploader.upload(resumeFile.tempFilePath, { folder: "Job_Resume" });
+            
+            if (!uploadOnCloudinary || uploadOnCloudinary.error) {
+                throw new ApiError(500, "Failed to upload resume to Cloudinary");
+            }
+
+            newUserData.resume = {
+                public_id: uploadOnCloudinary.public_id,
+                url: uploadOnCloudinary.secure_url,
+            };
+
+        } catch (error) {
+            console.error("Error during resume upload:", error);
+            throw new ApiError(500, `Failed to upload resume. Error: ${error.message}`);
         }
     }
 
@@ -164,11 +168,13 @@ const updateProfile = asyncHandler(async (req, res) => {
         new: true,
         runValidators: true,
         useFindAndModify: false,
-    }).select("-password")
+    }).select("-password");
+    
     return res.status(200).json(new ApiResponse(200, {
         user: updatedUser,
     }, "Profile updated successfully!"));
 });
+
 
 
 const changePassword = asyncHandler(async (req, res) => {

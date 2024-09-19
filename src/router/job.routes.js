@@ -4,7 +4,7 @@ import { createJob, updateJob, getAllJobs, getMyJob, deleteJob, getASingleJob } 
 
 const router = express.Router();
 
-router.post("/create-job", isAuthenticated, isAuthorized("Employer"), createJob);
+router.post("/post-job", isAuthenticated, isAuthorized("Employer"), createJob);
 router.put("/update-job/:id", isAuthenticated, isAuthorized("Employer"), updateJob);
 router.get("/get-all-jobs", getAllJobs)
 router.get("/getmyjobs", isAuthenticated, isAuthorized("Employer"), getMyJob);

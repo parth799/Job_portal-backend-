@@ -1,67 +1,74 @@
 import mongoose from "mongoose";
-
-const jobSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
+import validator from "validator";
+const applicationSchema = new mongoose.Schema({
+  jobSeekerInfo: {
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      validate: [validator.isEmail, "Please provide a valid email."],
+    },
+    phone: {
+      type: Number,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    resume: {
+      public_id: String,
+      url: String,
+    },
+    coverLetter: {
+      type: String,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["Job Seeker"],
+      required: true,
+    },
   },
-  jobType: {
-    type: String,
-    required: true,
-    enum: ["Full-time", "Part-time"],
+  employerInfo: {
+    id: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: ["Employer"],
+      required: true,
+    },
   },
-  location: {
-    type: String,
-    required: true,
+  jobInfo: {
+    jobId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+    },
+    jobTitle: {
+      type: String,
+      required: true,
+    },
   },
-  companyName: {
-    type: String,
-    required: true,
-  },
-  introduction: {
-    type: String,
-  },
-  responsibilities: {
-    type: String,
-    required: true,
-  },
-  qualifications: {
-    type: String,
-    required: true,
-  },
-  offers: {
-    type: String,
-  },
-  salary: {
-    type: String,
-    required: true,
-  },
-  hiringMultipleCandidates: {
-    type: String,
-    default: "No",
-    enum: ["Yes", "No"],
-  },
-  personalWebsite: {
-    title: String,
-    url: String
-  },
-  jobNiche: {
-    type: String,
-    required: true,
-  },
-  newsLettersSent: {
-    type: Boolean,
-    default: false,
-  },
-  jobPostedOn: {
-    type: Date,
-    default: Date.now,
-  },
-  postedBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+  deletedBy: {
+    jobSeeker: {
+      type: Boolean,
+      default: false,
+    },
+    employer: {
+      type: Boolean,
+      default: false,
+    },
   },
 });
 
-export const Job = mongoose.model("Job", jobSchema);
+export const Application = mongoose.model("Application", applicationSchema);
