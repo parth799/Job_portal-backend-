@@ -130,4 +130,32 @@ const getAllJobs = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, {jobs, count: jobCount}, "Jobs fetched successfully."));
 })
 
-export { createJob, updateJob, getAllJobs }
+const getMyJob = asyncHandler(async (req,res) => {
+    const myJobs = await Job.find({postedBy: req.user._id})
+    return res.status(200).json(new ApiResponse(200, myJobs, "My Jobs fetched successfully."));
+})
+
+const deleteJob = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const job = await Job.findById(id);
+    if (!job) {
+        throw new ApiError(404, "Job not found");
+    }
+
+    if (String(job.postedBy)!== String(req.user._id)) {
+        throw new ApiError(403, "You are not authorized to delete this job");
+    }
+    await job.deleteOne();
+    return res.status(200).json(new ApiResponse(200, null, "Job deleted successfully."));
+})
+
+const getASingleJob = asyncHandler(async (req,res) => {
+    const {id} = req.params;
+    const job = await Job.findById(id);
+    if (!job) {
+        throw new ApiError(404, "Job not found");
+    }
+    return res.status(200).json(new ApiResponse(200, job, "Job fetched successfully."));
+})
+
+export { createJob, updateJob, getAllJobs, getMyJob, deleteJob, getASingleJob } 
