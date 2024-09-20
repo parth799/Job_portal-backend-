@@ -21,6 +21,21 @@ const createJob = asyncHandler(async (req, res) => {
         jobNiche
     } = req.body;
 
+    console.log(title,
+        jobType,
+        location,
+        companyName,
+        introduction,
+        responsibilities,
+        qualifications,
+        offers,
+        salary,
+        hiringMultipleCandidates,
+        personalWebsiteTitle,
+        personalWebsiteUrl,
+        jobNiche);
+    
+
     if (!title || !jobType || !location || !companyName || !introduction || !responsibilities || !salary || !jobNiche) {
         throw new ApiError(400, "Pleace provide your full job details..");
     }
