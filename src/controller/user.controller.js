@@ -148,7 +148,7 @@ const updateProfile = asyncHandler(async (req, res) => {
             }
 
             const uploadOnCloudinary = await cloudinary.uploader.upload(resumeFile.tempFilePath, { folder: "Job_Resume" });
-            
+
             if (!uploadOnCloudinary || uploadOnCloudinary.error) {
                 throw new ApiError(500, "Failed to upload resume to Cloudinary");
             }
@@ -169,7 +169,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         runValidators: true,
         useFindAndModify: false,
     }).select("-password");
-    
+
     return res.status(200).json(new ApiResponse(200, {
         user: updatedUser,
     }, "Profile updated successfully!"));
