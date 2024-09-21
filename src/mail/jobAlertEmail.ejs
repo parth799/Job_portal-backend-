@@ -1,93 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Job Alert Email</title>
     <style type="text/css">
-        body{
-            margin:0;
-            padding: 0;
-            min-width: 100%;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 16px;
-            line-height: 1.5;
-            background-color: #FAFAFA;
-            color: #222222;
-        }
-        a{
-            color:#0070f3;
-            text-decoration: none;
-        }
-        h1{
-            font-size: 24px;
-            font-weight: 700;
-            line-height: 1.25;
-            margin-top: 0;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        h2{
-            font-size: 20px;
-            font-weight: 600;
-            color: #0070f3;
-        }
-        p{
-            margin: 0;
-            margin-bottom: 24px;
-        }
-        table td{
-            vertical-align: top;
-        }
-        .email-wrapper{
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        .email-header{
-            background-color: #0070f3;
-            padding: 24px;
-            color: #ffffff;
-        }
-        .email-body{
-            padding: 24px;
-            background-color: #ffffff;
-        }
-        .email-footer{
-            background-color: #f6f6f6;
-            padding: 24px;
-        }
-        .button {
-            display: inline-block;
-            background-color: #0070f3;
-            color: #ffffff;
-            font-size:16px;
-            font-weight: 700;
-            text-align: center;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 4px;
-        }
+      body {
+        margin: 0;
+        padding: 0;
+        min-width: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        background-color: #fafafa;
+        color: #222222;
+      }
+      a {
+        color: #0070f3;
+        text-decoration: none;
+      }
+      h1 {
+        font-size: 24px;
+        font-weight: 700;
+        line-height: 1.25;
+        margin-top: 0;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+      h2 {
+        font-size: 20px;
+        font-weight: 600;
+        color: #0070f3;
+      }
+      p {
+        margin: 0;
+        margin-bottom: 24px;
+      }
+      table td {
+        vertical-align: top;
+      }
+      .email-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .email-header {
+        background-color: #0070f3;
+        padding: 24px;
+        color: #ffffff;
+      }
+      .email-body {
+        padding: 24px;
+        background-color: #ffffff;
+      }
+      .email-footer {
+        background-color: #f6f6f6;
+        padding: 24px;
+      }
+      .button {
+        display: inline-block;
+        background-color: #0070f3;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 700;
+        text-align: center;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 4px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="email-wrapper">
-        <div class="email-header">   
-            <h1>Job Alert from Job Portel</h1>
-        </div>
-        <div class="email-body">
-            <p>Hello <%= user.name %>,</p>
-            <p>Great news! A new job that fits your niche has just been posted:</p>
-            <h2>Job Position: <%= job.title %></h2>
-            <p><strong>Company:</strong> <%= job.companyName %></p>
-            <p><strong>Location:</strong> <%= job.location %></p>
-            <p><strong>Salary:</strong> <%= job.salary %></p>
-            <p>Don’t wait too long! Job openings like these are filled quickly.</p>
-            <p><a href="<%= job.url %>" class="button">View Job Details</a></p>
-            <p>We’re here to support you in your job search. Best of luck!</p>
-        </div>
-        <div class="email-footer">  
-            <p>If you have any questions, please contact us at <a href="desaiparth132@gmail.com">support@jobportels.com</a>.</p>
-        </div>
+      <div class="email-header">
+        <h1>Job Alert from Job Portel</h1>
+      </div>
+      <div class="email-body">
+        <p>Hello <%= user.name %>,</p>
+        <p>Great news! A new job that fits your niche has just been posted:</p>
+        <h2>Job Position: <%= job.title %></h2>
+        <p><strong>Company:</strong> <%= job.companyName %></p>
+        <p><strong>Location:</strong> <%= job.location %></p>
+        <p><strong>Salary:</strong> <%= job.salary %></p>
+        <p>Don’t wait too long! Job openings like these are filled quickly.</p>
+        <p><a href="<%= job.url %>" class="button">View Job Details</a></p>
+        <p>We’re here to support you in your job search. Best of luck!</p>
+      </div>
+      <div class="email-footer">
+        <p>
+          If you have any questions, please contact us at
+          <a href="desaiparth132@gmail.com">support@jobportels.com</a>.
+        </p>
+      </div>
     </div>
-</body>
+  </body>
 </html>

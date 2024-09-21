@@ -4,7 +4,7 @@ import { Job } from "../model/job.model.js";
 import { sendEmail } from "../utils/sendEmail.js";
 
 const newsLetterCron = () => {
-    cron.schedule("*/1 * * * *", async () => {
+    cron.schedule("*/10 * * * *", async () => {
         console.log("Running cron automation!!");
         const jobs = await Job.find({ newsLettersSent: false });
 
